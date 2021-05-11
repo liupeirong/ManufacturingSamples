@@ -41,21 +41,22 @@ This file represents performance and quality data collected from the production 
 - `Timestamp`: UTC timestamp. In this sample, we assume data comes in per second, although at microsecond precision.
 - `Set_Point_Speed`: Target speed of the production line. For example, 100 means 100 parts per second.
 - `Actual_Speed`: Actual speed of the production line. If actual speed is below certain threshold, for example, 80%, then the production line is considered "down". This is used to compute the _availability_ component of OEE. Also, the actual speed as a percentage of the set point is used to calculate the _performance_ component of OEE.
-- `Line_Pass_Fail`: Number of parts produced at the timestamp that are considered good or defect. This is used to calculate the _quality_ component of OEE.
-- `Machine{X}_Pass_Fail`: Number of parts passing through individual machines on a production line that are considered good or defect. Defects from individual machines contribute to the overall defects on a production line. However, each defect reported by a machine doesn't necessarily lead to a defect on the line.
+- `Line_Pass`: Number of parts produced at the timestamp that passed quality check. This is used to calculate the _quality_ component of OEE.
+- `Line_Fail`: Number of parts produced at the timestamp that failed quality check. This is used to calculate the _quality_ component of OEE.
+- `Machine{X}_Pass`: Number of parts passing through individual machines on a production line that passed the quality check. Defects from individual machines contribute to the overall defects on a production line. However, each defect reported by a machine doesn't necessarily lead to a defect on the line.
 
-| Line_Name | Timestamp               | Set_Point_Speed | Actual_Speed | Line_Pass_Fail | Machine1_Pass_Fail | Machine2_Pass_Fail | Machine3_Pass_Fail |
-| :-------- | :---------------------- | :-------------- | :----------- | :------------- | :----------------- | :----------------- | :----------------- |
-| p01       | 2021-04-01T12:01:23.000 | 100             | 99           | 1              | 1                  | 0                  | 1                  |
-| p01       | 2021-04-01T12:01:23.050 | 100             | 100          | 1              | 1                  | 0                  | 1                  |
-| p01       | 2021-04-01T12:01:23.100 | 100             | 99           | 0              | 0                  | 0                  | 1                  |
-| p01       | 2021-04-01T12:01:24.000 | 100             | 95           | 1              | 1                  | 1                  | 1                  |
-| p01       | 2021-04-01T12:01:24.100 | 100             | 89           | 1              | 1                  | 1                  | 1                  |
-| p02       | 2021-04-01T12:01:23.000 | 100             | 100          | 1              | 1                  | 0                  | 1                  |
-| p02       | 2021-04-01T12:01:23.020 | 100             | 99           | 1              | 1                  | 0                  | 1                  |
-| p02       | 2021-04-01T12:01:23.110 | 100             | 99           | 1              | 1                  | 0                  | 0                  |
-| p02       | 2021-04-01T12:01:24.000 | 100             | 95           | 1              | 1                  | 1                  | 1                  |
-| p02       | 2021-04-01T12:01:24.120 | 100             | 89           | 1              | 1                  | 1                  | 1                  |
+| Line_Name | Timestamp               | Set_Point_Speed | Actual_Speed | Line_Pass | Line_Fail | Machine1_Pass | Machine2_Pass | Machine3_Pass |
+| :-------- | :---------------------- | :-------------- | :----------- | :-------- | :-------- | :------------ | :------------ | :------------ |
+| p01       | 2021-04-01T12:01:23.000 | 100             | 99           | 5         | 2         | 7             | 5             | 7             |
+| p01       | 2021-04-01T12:01:23.050 | 100             | 100          | 5         | 0         | 5             | 5             | 5             |
+| p01       | 2021-04-01T12:01:23.100 | 100             | 99           | 0         | 1         | 0             | 0             | 1             |
+| p01       | 2021-04-01T12:01:24.000 | 100             | 95           | 1         | 0         | 1             | 1             | 1             |
+| p01       | 2021-04-01T12:01:24.100 | 100             | 89           | 10        | 0         | 10            | 10            | 10            |
+| p02       | 2021-04-01T12:01:23.000 | 100             | 100          | 11        | 1         | 12            | 11            | 12            |
+| p02       | 2021-04-01T12:01:23.020 | 100             | 99           | 3         | 0         | 2             | 3             | 1             |
+| p02       | 2021-04-01T12:01:23.110 | 100             | 99           | 2         | 1         | 1             | 2             | 2             |
+| p02       | 2021-04-01T12:01:24.000 | 100             | 95           | 10        | 1         | 9             | 10            | 11            |
+| p02       | 2021-04-01T12:01:24.120 | 100             | 89           | 1         | 0         | 1             | 1             | 1             |
 
 ### Equipment Faults Timeseries
 
@@ -70,7 +71,7 @@ This file contains the time period for each fault on each line. Faults cause dow
 
 - **Availability**: uptime/total time
 - **Performance**: actual_speed/set_point_speed
-- **Quality**: good_parts/total_parts
+- **Quality**: good_parts/total_parts, total number of parts produced is calculated as `Line_Pass` + `Line_Fail`
 - **OEE**: Availability X Performance X Quality
 
 More important than the numbers themselves are the insights into causes for downtime and defects. Only when the reasons for downtime and defects are understood, can the manufacturing process be effectively improved.
