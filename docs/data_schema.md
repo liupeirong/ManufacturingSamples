@@ -1,4 +1,4 @@
-# Input/Output data schema as a sample to calculate OEE for manufacturing lines
+# Overview of sample input data schema to calculate OEE for manufacturing lines
 
 ## Input Data Schema
 
@@ -41,8 +41,8 @@ This file represents performance and quality data collected from the production 
 - `Timestamp`: UTC timestamp, microsecond precision.
 - `Set_Point_Speed`: Target speed of the production line. For example, 100 means 100 parts per time unit.
 - `Actual_Speed`: Actual speed of the production line. If actual speed is below certain threshold, then the production line is considered "down", which is used to compute the _availability_ component of OEE. Also the actual speed as a percentage of the set point is used to calculate the _performance_ component of OEE.
-- `Line_Pass_Fail`: Whether the part produced at the timestamp is considered good or scrap. This is used to calculate the _quality_ component of OEE.
-- `Machine{X}_Pass_Fail`: Whether the part passing through individual machines on the production line is considered good or defect. Defects from individual machines contribute to the overall defect on a line. However, it's not necessarily each defect reported by a Machine leads to a defect on the line.
+- `Line_Pass_Fail`: Number of parts produced at the timestamp that are considered good or defect. This is used to calculate the _quality_ component of OEE.
+- `Machine{X}_Pass_Fail`: Number of parts passing through individual machines on the production line that are considered good or defect. Defects from individual machines contribute to the overall defects on a production line. However, each defect reported by a Machine doesn't necessarily lead to a defect on the line.
 
 | Line_Name | Timestamp               | Set_Point_Speed | Actual_Speed | Line_Pass_Fail | Machine1_Pass_Fail | Machine2_Pass_Fail | Machine3_Pass_Fail |
 | :-------- | :---------------------- | :-------------- | :----------- | :------------- | :----------------- | :----------------- | :----------------- |
@@ -59,7 +59,7 @@ This file represents performance and quality data collected from the production 
 
 ### Equipment Faults Timeseries
 
-This file contains the time period for each fault on each line. This information is used to attribute downtime of production lines.
+This file contains the time period for each fault on each line. Faults cause downtime of production lines. Note that this info represents _events_ with a begin and end time rather than timeseries data with a point of time.
 
 | Line_Name | Fault_Code | Start_Time              | End_Time                |
 | :-------- | :--------- | :---------------------- | :---------------------- |
@@ -68,9 +68,17 @@ This file contains the time period for each fault on each line. This information
 
 ## How is OEE calculated?
 
-Availability: uptime/total time
-Performance: actual_speed/target_speed
-Quality: good_parts/total_parts
+- **Availability**: uptime/total time
+- **Performance**: actual_speed/target_speed
+- **Quality**: good_parts/total_parts
+- **OEE**: Availability X Performance X Quality
 
-Downtime reasons: Fault duration, fault count
-Defect reasons: Machine{X} fail count
+More important than the numbers themselves are the insights into causes for downtime and defects. Only when the reasons for downtime and defects are understood, can the manufacturing process be effectively improved.
+
+- **Cause of Downtime**: which fault(s) lasted longest or happened most frequently
+- **Cause of Defect**: which machine(s) produced most of the defects
+
+Additional sample questions that can be answered by this data:
+
+- Which shift has the best performance on each line? Why?
+- Why is one line performing better than the other?
