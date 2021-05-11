@@ -4,7 +4,7 @@
 
 ### Assets
 
-In real world, assets can have more hierarchies such as plants, lines, cells, machines and more. This file stores the simplified asset mapping between manufacturing sites (plants, factories) and the production lines in each site. `Line_Name` is unique across all sites, and serves as the unique key for this table.
+In real world assets can have more hierarchies such as plants, lines, cells, machines and more. In this sample, we store simplified asset mapping between manufacturing sites (plants, factories) and the production lines in each site. `Line_Name` is unique across all sites, and serves as the unique key for this file.
 
 | Site_Name | Site_Description | Line_Name | Line_Description |
 | :-------- | :--------------- | :-------- | :--------------- |
@@ -14,7 +14,7 @@ In real world, assets can have more hierarchies such as plants, lines, cells, ma
 
 ### Shifts
 
-Shifts could also vary by manufactures, plants, lines, and could have more complex schedules. Here we assume each shift is 8 hours, and there are 3 shifts every day, including weekends and holidays. Unique key of the table is `Shift_Name`.
+Shifts could also vary by manufactures, plants, lines, and could have more complex schedules. In this sample we assume each shift is 8 hours, and there are 3 shifts every day, including weekends and holidays. Unique key of this file is `Shift_Name`.
 
 | Shift_Name | Start_Hour | End_Hour |
 | :--------- | :--------- | :------- |
@@ -24,7 +24,7 @@ Shifts could also vary by manufactures, plants, lines, and could have more compl
 
 ### Equipment Faults
 
-This file contains the fault name and description mapping. Faults could be the cause of production downtime. Unique key is `Fault Code`.
+This file contains the fault name and description mapping. In this sample, we assume faults are the main cause of production downtime. Unique key is `Fault Code`.
 
 | Fault_Code | Fault_Description  |
 | :--------- | :----------------- |
@@ -34,15 +34,15 @@ This file contains the fault name and description mapping. Faults could be the c
 | f04        | electrical problem |
 | f05        | over heat          |
 
-### Production Line Measurement Timeseries
+### Production Timeseries Data
 
-This file represents performance and quality data collected from the production lines.
+This file represents performance and quality data collected from the production lines. `Line_Name` and `Timestamp` combined form the unique key.
 
-- `Timestamp`: UTC timestamp, microsecond precision.
-- `Set_Point_Speed`: Target speed of the production line. For example, 100 means 100 parts per time unit.
-- `Actual_Speed`: Actual speed of the production line. If actual speed is below certain threshold, then the production line is considered "down", which is used to compute the _availability_ component of OEE. Also the actual speed as a percentage of the set point is used to calculate the _performance_ component of OEE.
+- `Timestamp`: UTC timestamp. In this sample, we assume data comes in per second, although at microsecond precision.
+- `Set_Point_Speed`: Target speed of the production line. For example, 100 means 100 parts per second.
+- `Actual_Speed`: Actual speed of the production line. If actual speed is below certain threshold, for example, 80%, then the production line is considered "down". This is used to compute the _availability_ component of OEE. Also, the actual speed as a percentage of the set point is used to calculate the _performance_ component of OEE.
 - `Line_Pass_Fail`: Number of parts produced at the timestamp that are considered good or defect. This is used to calculate the _quality_ component of OEE.
-- `Machine{X}_Pass_Fail`: Number of parts passing through individual machines on the production line that are considered good or defect. Defects from individual machines contribute to the overall defects on a production line. However, each defect reported by a Machine doesn't necessarily lead to a defect on the line.
+- `Machine{X}_Pass_Fail`: Number of parts passing through individual machines on a production line that are considered good or defect. Defects from individual machines contribute to the overall defects on a production line. However, each defect reported by a machine doesn't necessarily lead to a defect on the line.
 
 | Line_Name | Timestamp               | Set_Point_Speed | Actual_Speed | Line_Pass_Fail | Machine1_Pass_Fail | Machine2_Pass_Fail | Machine3_Pass_Fail |
 | :-------- | :---------------------- | :-------------- | :----------- | :------------- | :----------------- | :----------------- | :----------------- |
@@ -59,7 +59,7 @@ This file represents performance and quality data collected from the production 
 
 ### Equipment Faults Timeseries
 
-This file contains the time period for each fault on each line. Faults cause downtime of production lines. Note that this info represents _events_ with a begin and end time rather than timeseries data with a point of time.
+This file contains the time period for each fault on each line. Faults cause downtime of production lines. Note that this info represents _events_ with a begin and end time rather than timeseries data at a point of time. Unique key is a combination of `Line_Name`, `Fault_Code`, and `Start_Time`.
 
 | Line_Name | Fault_Code | Start_Time              | End_Time                |
 | :-------- | :--------- | :---------------------- | :---------------------- |
@@ -69,7 +69,7 @@ This file contains the time period for each fault on each line. Faults cause dow
 ## How is OEE calculated?
 
 - **Availability**: uptime/total time
-- **Performance**: actual_speed/target_speed
+- **Performance**: actual_speed/set_point_speed
 - **Quality**: good_parts/total_parts
 - **OEE**: Availability X Performance X Quality
 
