@@ -21,7 +21,7 @@
 | Line_Name | Timestamp | Set_Point_Speed | Actual_Speed | Line_Pass_Fail | Machine1_Pass_Fail | Machine2_Pass_Fail | Machine3_Pass_Fail |
 | :-------- | :-------- | :-------------- | :----------- | :------------- | :----------------- | :----------------- | :----------------- |
 
-## Equipment Faults Timeseries
+## Equipment Fault Events
 
 | Line_Name | Fault_Code | Start_Time | End_Time |
 | :-------- | :--------- | :--------- | :------- |
